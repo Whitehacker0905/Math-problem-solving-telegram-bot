@@ -1,0 +1,28 @@
+from telegram import Update
+from telegram.ext import ApplicationBuilder, MessageHandler, filters, ContextTypes
+
+# Set the path to the photo you want to send in response
+RESPONSE_IMAGE_PATH = 'response.jpg'
+
+# This function is triggered when a photo is received
+async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    # Save the incoming user photo if needed
+    photo_file = await update.message.photo[-1].get_file()
+    await photo_file.download_to_drive("user_photo.jpg")  # optional
+
+    # Send your pre-defined image as a response
+    await update.message.reply_photo(photo=open(RESPONSE_IMAGE_PATH, 'rb'))
+
+# Main function to start the bot
+async def main():
+
+    app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
+
+    print("Bot is running...")
+    await app.run_polling()
+
+# Run the bot
+if __name__ == '__main__':
+    import asyncio
+    asyncio.run(main())
+
