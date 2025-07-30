@@ -2,9 +2,10 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, MessageHandler, filters, ContextTypes
 import logging
 import asyncio
+import os
 
-BOT_TOKEN = "8207247321:AAGh4l0lMu-RwsgaVTaIBOY0Pi2-4vPFQeg"  # Replace this
-ADMIN_ID = 985374783               # Replace with your Telegram numeric ID
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+ADMIN_ID = int(os.getenv("ADMIN_ID"))
 
 forward_map = {}  # forwarded_msg_id ➝ {'user_id': int, 'completed': bool, 'admin_msg_ids': [int]}
 
