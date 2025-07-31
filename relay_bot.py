@@ -1,11 +1,18 @@
+
+
 from telegram import Update
 from telegram.ext import ApplicationBuilder, MessageHandler, filters, ContextTypes
 import logging
 import asyncio
 import os
+from dotenv import load_dotenv
 
-BOT_TOKEN = os.getenv("BOT_TOKEN")
+load_dotenv()
+
 ADMIN_ID = int(os.getenv("ADMIN_ID"))
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+
+
 
 forward_map = {}  # forwarded_msg_id ➝ {'user_id': int, 'completed': bool, 'admin_msg_ids': [int]}
 
