@@ -19,6 +19,26 @@ forward_map = {}  # forwarded_msg_id ➝ {'user_id': int, 'completed': bool, 'ad
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# --- User sends a text message ---
+async def handle_user_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user = update.effective_user
+    text = update.message.text
+
+    forwarded = await context.bot.forward_message(
+        chat_id=ADMIN_ID,
+        from_chat_id=update.effective_chat.id,
+        message_id=update.message.message_id
+    )
+
+    forward_map[forwarded.message_id] = {
+        'user_id': user.id,
+        'completed': False,
+        'admin_msg_ids': []
+    }
+
+    logger.info(f"Forwarded text from {user.id} to admin (msg {forwarded.message_id})")
+
+
 # --- User sends a photo ---
 async def handle_user_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
@@ -115,6 +135,8 @@ def main():
     # User sends a photo (not from admin)
     app.add_handler(MessageHandler(filters.PHOTO & (~filters.User(ADMIN_ID)), handle_user_photo))
 
+    app.add_handler(MessageHandler(filters.TEXT & (~filters.User(ADMIN_ID)), handle_user_text))
+
     # Admin replies to forwarded message (text, photo, or voice)
     reply_filter = filters.User(ADMIN_ID) & (filters.TEXT | filters.PHOTO | filters.VOICE)
     app.add_handler(MessageHandler(reply_filter, handle_admin_reply))
@@ -124,4 +146,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
 
